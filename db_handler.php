@@ -2,8 +2,6 @@
 
 
 class db_handler{
-// Hold the class instance.
-//private static $instance = null;
 
 private $connection_set=false;
 private $custom_credentials_set=false;
@@ -97,20 +95,12 @@ private function set_connection(){
 
     $success=true;
 
-    //Permite definir a configuração da base de dados
+    
     $dsn = "mysql:host={$this->host};dbname={$this->db};charset={$this->charset}";
 
-    $opt = array(
-        //Em caso de erro ocorre excepcao
-        PDO::ATTR_ERRMODE=> PDO::ERRMODE_EXCEPTION,   
-        //Define o comportamento por defeito do fetch
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        //Ativa/desativa emular prepared statements     
-        PDO::ATTR_EMULATE_PREPARES   => false,                
-    );
 
     try{
-        $this->conn = new PDO($dsn, $this->user, $this->pass, $opt);   
+        $this->conn = new PDO($dsn, $this->user, $this->pass);   
     }catch(PDOException $rip){
         echo 'couldnt connect to db';
         $success=false;
@@ -120,26 +110,6 @@ private function set_connection(){
     return $success;
 }
 
-
-
-/*
- * Retorna a instancia unica do databa
- * @return [type] [description]
-
-public static function getInstance()
-{
-  if(!self::$instance)
-  {
-  self::$instance = new ConnectDb();
-}
-
-return self::$instance;
-}
-
-public function getConnection()
-{
-  return $this->conn;
-}*/
 
 
 } //end class
