@@ -1,13 +1,15 @@
 <?php
 
 
-class Db{
+class db_handler{
 // Hold the class instance.
 //private static $instance = null;
 
 private $connection_set=false;
 private $custom_credentials_set=false;
 
+private $db='';
+private $charset='';
 
 private $host = '';
 private $user = '';
@@ -18,8 +20,8 @@ private $name = '';
 private $conn;
 
 
-public function connection_status(){
-    return $connection_set;
+public function is_connected(){
+    return $this->connection_set;
 }
 
 /* If custom_credentials changed to true, 
@@ -56,22 +58,23 @@ public function set_custom_credentials($db,$user,$pass){
 
 
 public function pass_query($query){
-    $success=false;
+    $result=false;
 
     if($this->connection_set){
 
         $prepare=$this->conn->prepare($query);
+
         if( $prepare->execute() ){
-            
+            $result=$prepare->fetchAll();
         }else{
             echo 'rip';
         }
-        
+
     }else{
         echo 'no connection';
     }
 
-    return $success;
+    return $result;
 }
 
 
@@ -90,7 +93,7 @@ private function set_connection(){
     $success=true;
 
     //Permite definir a configuração da base de dados
-    $dsn = "mysql:host=$this->host;dbname=$db;charset=$charset";
+    $dsn = "mysql:host={$this->host};dbname={$this->db};charset={$this->charset}";
 
     $opt = array(
         //Em caso de erro ocorre excepcao
@@ -102,7 +105,7 @@ private function set_connection(){
     );
 
     try{
-        $this->conn = new PDO($dsn, $user, $pass, $opt);   
+        $this->conn = new PDO($dsn, $this->user, $this->pass, $opt);   
     }catch(PDOException $rip){
         echo 'couldnt connect to db';
         $success=false;
