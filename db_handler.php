@@ -61,13 +61,18 @@ public function pass_query($query){
     $result=false;
 
     if($this->connection_set){
+        $execute=true;
 
-        $prepare=$this->conn->prepare($query);
+        try{
+            $prepare=$this->conn->prepare($query);
+        }catch(PDOException $rip){
+            echo 'invalid query';
+            $execute=false;
+        }
 
-        if( $prepare->execute() ){
+        if($execute){
+            $prepare->execute();
             $result=$prepare->fetchAll();
-        }else{
-            echo 'rip';
         }
 
     }else{
