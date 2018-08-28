@@ -1,7 +1,7 @@
 <?php
 
 
-class db_handler{
+class Db_handler{
 
 private $connection_set=false;
 private $custom_credentials_set=false;
@@ -55,6 +55,55 @@ public function set_custom_credentials($db,$user,$pass){
 }
 
 
+public function update_query($table, $columns, $values, $condition){
+    $result=false; //return var
+
+
+    $query=""; 
+    
+    //as colunas a alterar
+    if(count($columns)==count($values)){
+        $query="update $table set ";
+
+        for($i=0; $i < count($columns)-1 ; $i++ ){
+            $query.="$columns[$i]='$values[$i]', ";
+        }
+        $query.=end($columns)."='".end($values)."' where $condition;";
+
+    }
+    
+    return $this->pass_query($query);
+}
+
+
+public function insert_query($table, $columns, $values){
+
+    $query="insert into $table ("; 
+
+    //as colunas a alterar
+    for($i=0; $i < count($columns)-1 ; $i++ ){
+        $query.=$columns[$i].",";
+    }
+    $query.=end($columns).") values (";
+
+
+    //os valores a ser inseridos
+    for($i=0; $i < count($values)-1 ; $i++ ){
+        $query.="'".$values[$i]."',";
+    }
+    $query.="'".end($values)."');";
+
+    return $this->pass_query($query);
+}
+
+
+public function search_query($column="*", $table, $condition){
+    $query="select $column from $table where $condition;"; 
+
+    return $this->pass_query($query);
+}
+
+
 public function pass_query($query){
     $result=false;
 
@@ -83,7 +132,7 @@ public function pass_query($query){
 
 private function set_default_credentials(){
 
-    $this->host = '127.0.0.1';
+    $this->host = 'localhost';
     $this->db = 'ponchaadvisor';
     $this->charset = 'utf8';
 
